@@ -45,7 +45,7 @@ def one_hot_encode(labels):  # ラベルをスカラー形式からベクトル�
     return one_hot_encode
 
 
-# In[6]:
+# In[10]:
 
 def load_urbansound8k(parent_dir, sub_dirs, verbose=0):
     file_ext = '*.wav'
@@ -57,23 +57,21 @@ def load_urbansound8k_train_and_test(parent_dir = 'UrbanSound8K/audio/',
                                      tr_sub_dirs = ['fold1', 'fold2'], 
                                      ts_sub_dirs = ['fold3'],
                                      verbose = 0):
-#    tr_features, tr_labels = load_urbansound8k(parent_dir, tr_sub_dirs, verbose)
-    tr_features = 0
-    tr_labels = 0
+    tr_features, tr_labels = load_urbansound8k(parent_dir, tr_sub_dirs, verbose)
     ts_features, ts_labels = load_urbansound8k(parent_dir, ts_sub_dirs, verbose)
     return tr_features, tr_labels, ts_features, ts_labels
 
 
-# In[7]:
+# In[11]:
 
 def save_to_npy_files(tr_features, tr_labels, ts_features, ts_labels, prefix=''):
-#    np.save(prefix + 'tr_features.npy', tr_features)
-#    np.save(prefix + 'tr_labels.npy', tr_labels)
+    np.save(prefix + 'tr_features.npy', tr_features)
+    np.save(prefix + 'tr_labels.npy', tr_labels)
     np.save(prefix + 'ts_features.npy', ts_features)
     np.save(prefix + 'ts_labels.npy', ts_labels)
 
 
-# In[8]:
+# In[12]:
 
 def load_from_npy_files(prefix = ''):
     tr_features = np.load(prefix + 'tr_features.npy')
@@ -83,7 +81,7 @@ def load_from_npy_files(prefix = ''):
     return tr_features, tr_labels, ts_features, ts_labels
 
 
-# In[ ]:
+# In[9]:
 
 if __name__ == '__main__':
     parent_dir = 'UrbanSound8K/audio/'

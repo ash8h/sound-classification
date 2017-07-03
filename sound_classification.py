@@ -14,7 +14,7 @@ from sklearn.metrics import precision_recall_fscore_support
 from datetime import datetime
 
 
-# In[2]:
+# In[3]:
 
 # データ読み込み
 import urbansound8k_loader as dataset
@@ -35,7 +35,7 @@ else:
     print('loaded successfully. # of train data=' + str(len(tr_features)) + ', # of test data=' + str(len(ts_features)))
 
 
-# In[94]:
+# In[4]:
 
 training_epochs = 5000
 n_dim = tr_features.shape[1]  # 193
@@ -44,7 +44,7 @@ n_hidden_units_one = 280
 n_hidden_units_two = 300
 
 
-# In[95]:
+# In[ ]:
 
 # モデル構築、学習、評価 by keras
 import keras
