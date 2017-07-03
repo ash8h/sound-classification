@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[61]:
+# In[1]:
 
 import glob
 import os
@@ -45,7 +45,7 @@ def one_hot_encode(labels):  # ラベルをスカラー形式からベクトル�
     return one_hot_encode
 
 
-# In[62]:
+# In[6]:
 
 def load_urbansound8k(parent_dir, sub_dirs, verbose=0):
     file_ext = '*.wav'
@@ -57,27 +57,29 @@ def load_urbansound8k_train_and_test(parent_dir = 'UrbanSound8K/audio/',
                                      tr_sub_dirs = ['fold1', 'fold2'], 
                                      ts_sub_dirs = ['fold3'],
                                      verbose = 0):
-    tr_features, tr_labels = load_urbansound8k(parent_dir, tr_sub_dirs, verbose)
+#    tr_features, tr_labels = load_urbansound8k(parent_dir, tr_sub_dirs, verbose)
+    tr_features = 0
+    tr_labels = 0
     ts_features, ts_labels = load_urbansound8k(parent_dir, ts_sub_dirs, verbose)
     return tr_features, tr_labels, ts_features, ts_labels
 
 
-# In[73]:
+# In[7]:
 
-def save_to_npy_files(tr_features, tr_labels, ts_features, ts_labels):
-    np.save('tr_features.npy', tr_features)
-    np.save('tr_labels.npy', tr_labels)
-    np.save('ts_features.npy', tr_features)
-    np.save('ts_labels.npy', tr_labels)
+def save_to_npy_files(tr_features, tr_labels, ts_features, ts_labels, prefix=''):
+#    np.save(prefix + 'tr_features.npy', tr_features)
+#    np.save(prefix + 'tr_labels.npy', tr_labels)
+    np.save(prefix + 'ts_features.npy', ts_features)
+    np.save(prefix + 'ts_labels.npy', ts_labels)
 
 
-# In[74]:
+# In[8]:
 
-def load_from_npy_files():
-    tr_features = np.load('tr_features.npy')
-    tr_labels = np.load('tr_labels.npy')
-    ts_features = np.load('ts_features.npy')
-    ts_labels = np.load('ts_labels.npy')
+def load_from_npy_files(prefix = ''):
+    tr_features = np.load(prefix + 'tr_features.npy')
+    tr_labels = np.load(prefix + 'tr_labels.npy')
+    ts_features = np.load(prefix + 'ts_features.npy')
+    ts_labels = np.load(prefix + 'ts_labels.npy')
     return tr_features, tr_labels, ts_features, ts_labels
 
 
@@ -85,12 +87,12 @@ def load_from_npy_files():
 
 if __name__ == '__main__':
     parent_dir = 'UrbanSound8K/audio/'
-    tr_subdirs = ['fold1','fold2']
-    ts_subdirs =['fold3']
+    tr_subdirs = ['fold1','fold2', 'fold3', 'fold4', 'fold5', 'fold6', 'fold7']
+    ts_subdirs =['fold8', 'fold9', 'fold10']
     
     print('loading urbansound8k dataset.')    
     get_ipython().magic('time tr_features, tr_labels, ts_features, ts_labels = load_urbansound8k_train_and_test(parent_dir,  tr_subdirs, ts_subdirs, 1)')
-    save_to_npy_files(tr_features, tr_labels, ts_features, ts_labels)
+    save_to_npy_files(tr_features, tr_labels, ts_features, ts_labels, prefix='all_')
 
 
 # In[ ]:

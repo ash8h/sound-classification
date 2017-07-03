@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[ ]:
+# In[1]:
 
 import glob
 import os
@@ -14,7 +14,7 @@ from sklearn.metrics import precision_recall_fscore_support
 from datetime import datetime
 
 
-# In[86]:
+# In[2]:
 
 # データ読み込み
 import urbansound8k_loader as dataset
@@ -23,36 +23,28 @@ import urbansound8k_loader as dataset
 #tr_features, tr_labels = dataset.load_urbansound8k(parent_dir, ['fold1', 'fold2'])
 #ts_features, ts_labels = dataset.load_urbansound8k(parent_dir, ['fold3'])
 
-get_ipython().magic('time tr_features, tr_labels, ts_features, ts_labels = dataset.load_from_npy_files()')
+get_ipython().magic("time tr_features, tr_labels, ts_features, ts_labels = dataset.load_from_npy_files('all_')")
 
 if (len(tr_features) !=  len(tr_labels)):
     print('WARN: invalid # of training data. features=' + str(len(tr_features)) + ', labels=' + str(len(tr_labels)))
 elif (len(ts_features) !=  len(ts_labels)):
     print('WARN: invalid # of tast data. features=' + str(len(ts_features)) + ', labels=' + str(len(ts_labels)))
-elif (len(tr_features) == 0 || len(ts_features) == 0):
+elif (len(tr_features) == 0 or len(ts_features) == 0):
     print('WARN: no data.')
 else: 
     print('loaded successfully. # of train data=' + str(len(tr_features)) + ', # of test data=' + str(len(ts_features)))
 
 
-# In[ ]:
-
-
-
-
-# In[64]:
+# In[94]:
 
 training_epochs = 5000
-n_dim = tr_features.shape[1]
+n_dim = tr_features.shape[1]  # 193
 n_classes = 10
 n_hidden_units_one = 280 
 n_hidden_units_two = 300
-sd = 1 / np.sqrt(n_dim)
-learning_rate = 0.01
-log_dir = './log'
 
 
-# In[65]:
+# In[95]:
 
 # モデル構築、学習、評価 by keras
 import keras
@@ -73,11 +65,11 @@ with tf.Graph().as_default():
     KTF.set_learning_phase(1)
     
     model = Sequential()
-    model.add(Dense(512, activation='relu', input_shape=(n_dim,)))
+    model.add(Dense(n_hidden_units_one, activation='relu', input_shape=(n_dim,)))
     model.add(Dropout(0.2))
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(n_hidden_units_two, activation='relu'))
     model.add(Dropout(0.2))
-    model.add(Dense(10, activation='softmax'))
+    model.add(Dense(n_classes, activation='softmax'))
 
     model.summary()
 
@@ -102,24 +94,6 @@ with tf.Graph().as_default():
     print ('finished: ', datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
 KTF.set_session(old_session)
-
-
-# In[71]:
-
-type(tr_features)
-
-
-# In[80]:
-
-np.save('tr_features.npy', tr_features)
-np.save('tr_labels.npy', tr_labels)
-np.save('ts_features.npy', ts_features)
-np.save('ts_labels.npy', ts_labels)
-
-
-# In[ ]:
-
-
 
 
 # In[ ]:

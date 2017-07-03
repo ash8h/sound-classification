@@ -14,23 +14,28 @@ from sklearn.metrics import precision_recall_fscore_support
 from datetime import datetime
 
 
-# In[6]:
+# In[7]:
 
 # データ読み込み
-import ubersound8k_loader as dataset
+import urbansound8k_loader as dataset
 
-print('loading dataset. ' + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
-parent_dir = 'UrbanSound8K/audio/'
-tr_sub_dirs = ['fold1']
-ts_sub_dirs = ['fold3']
+#parent_dir = 'UrbanSound8K/audio/'
+#tr_features, tr_labels = dataset.load_urbansound8k(parent_dir, ['fold1', 'fold2'])
+#ts_features, ts_labels = dataset.load_urbansound8k(parent_dir, ['fold3'])
 
-tr_features, tr_labels = dataset.load_urbansound8k(parent_dir, tr_sub_dirs)
-ts_features, ts_labels = dataset.load_urbansound8k(parent_dir, ts_sub_dirs)
+get_ipython().magic('time tr_features, tr_labels, ts_features, ts_labels = dataset.load_from_npy_files()')
 
-print('loaded. ' + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+if (len(tr_features) !=  len(tr_labels)):
+    print('WARN: invalid # of training data. features=' + str(len(tr_features)) + ', labels=' + str(len(tr_labels)))
+elif (len(ts_features) !=  len(ts_labels)):
+    print('WARN: invalid # of tast data. features=' + str(len(ts_features)) + ', labels=' + str(len(ts_labels)))
+elif (len(tr_features) == 0 or len(ts_features) == 0):
+    print('WARN: no data.')
+else: 
+    print('loaded successfully. # of train data=' + str(len(tr_features)) + ', # of test data=' + str(len(ts_features)))
 
 
-# In[ ]:
+# In[8]:
 
 # 定数定義
 training_epochs = 5000
@@ -43,7 +48,7 @@ learning_rate = 0.01
 log_dir = './log'
 
 
-# In[3]:
+# In[9]:
 
 # モデル構築
 X = tf.placeholder(tf.float32,[None,n_dim])
@@ -72,12 +77,9 @@ correct_prediction = tf.equal(tf.argmax(y_,1), tf.argmax(Y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 
-# In[ ]:
+# In[11]:
 
 # 学習、評価
-summary_op = tf.summary.merge_all()
-summary_writer = tf.summary.FileWriter(log_dir, sess.graph)
-
 print(datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 print('# of data=' + str(len(tr_features)) + ', epoches=' + str(training_epochs))
 cost_history = np.empty(shape=[1],dtype=float)
@@ -91,6 +93,8 @@ with tf.Session() as sess:
     y_pred = sess.run(tf.argmax(y_,1),feed_dict={X: ts_features})
     y_true = sess.run(tf.argmax(ts_labels,1))
     print('Test accuracy: ' + str(round(sess.run(accuracy, feed_dict={X: ts_features, Y: ts_labels}) , 3)))
+    summary_op = tf.summary.merge_all()
+    summary_writer = tf.summary.FileWriter(log_dir, sess.graph)
 
 print('done. ' + datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 
@@ -101,4 +105,9 @@ plt.show()
 
 get_ipython().magic("time p,r,f,s = precision_recall_fscore_support(y_true, y_pred, average='micro')")
 print("F-Score:" + str(round(f,3)))
+
+
+# In[ ]:
+
+
 
